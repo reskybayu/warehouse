@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="/js/jquery-3.5.1.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous" />
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <title>Warehouse</title>
+    <style>
+      .pagination {
+        margin-left: 1000px;
+      }
+      .navbar {
+        background-color: #e3f2fd;
+      }
+    </style>
+</head>
+<body>
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+    <div class="container">
+        <ul class="nav navbar-nav navbar-left">
+            <a class="navbar-brand" style="color: black">Warehouse</a>
+        </ul>
+    </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+
+<!-- MODAL 1-->
+
+<div class="container mt-5">
+    <!-- Modal Tambah -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal Content -->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #e3f2fd">
+                    <h6 class="modal-title">Tambah</h6>
+                    <button type="button" onclick="BackUser()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="false">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AKHIR MODAL -->
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-sm-5 mb-5">
+            <h2>PT Indomega Teknologi</h2>
+        </div>
+
+        <div class="col">
+            <button type="button" class="btn btn-primary float-right" data-bs-toggle="modal" data-bs-target="#myModal" onclick="Tambah()">Tambah</button>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="userLink"></div>
+<script>
+
+    $.ajax({
+        url: "/api/user",
+        type: "get",
+        contentType: "application/json",
+        success: function (data) {
+        console.log("masuk")
+          var str = '<table class="table table-striped" align="center" style="width:80%" >';
+          str += "<tr>";
+          str += '<th style="text-align:center"> First Name </th>';
+          str += '<th style="text-align:center"> Last Name </th>';
+          str += '<th style="text-align:center"> Email </th>';
+          str += '<th style="text-align:center"> Alamat </th>';
+          str += '<th style="text-align:center" colspan = "2"> # </th>';
+
+          str += "</tr>";
+          for (i = 0; i < data.length; i++) {
+            str += "<tr>";
+            str += '<td style="text-align:center">' + data[i].firstName + "</td>";
+            str += '<td style="text-align:center">' + data[i].lastName + "</td>";
+            str += '<td style="text-align:center">' + data[i].email + "</td>";
+            str += '<td style="text-align:center">' + data[i].alamat + "</td>";
+            str += '<td style="text-align:center">';
+            str += '<button style="width:40px; height:40px;" class="btn btn-sm btn-primary" value="' + data[i].id + '" onclick="formEdit(this.value)">U</button>';
+            str += '<button style="width:40px; height:40px;" class="btn btn-danger ml-3" value="' + data[i].id + '" onclick="formDelete(this.value)">H</button>';
+            str += "</td>";
+            str += "</tr>";
+          }
+          str += "</table>";
+          str += "<br>";
+          $('#userLink').html(str);
+        }
+      });
+
+      function OpenList(){
+            $.ajax({
+        url: "/api/user",
+        type: "get",
+        contentType: "application/json",
+        success: function (data) {
+
+          var str = '<table class="table table-striped" align="center" style="width:80%" >';
+          str += "<tr>";
+          str += '<th style="text-align:center"> First Name </th>';
+          str += '<th style="text-align:center"> Last Name </th>';
+          str += '<th style="text-align:center"> Email </th>';
+          str += '<th style="text-align:center"> Alamat </th>';
+          str += '<th style="text-align:center" colspan = "2"> # </th>';
+
+          str += "</tr>";
+          for (i = 0; i < data.length; i++) {
+            str += "<tr>";
+            str += '<td style="text-align:center">' + data[i].firstName + "</td>";
+            str += '<td style="text-align:center">' + data[i].lastName + "</td>";
+            str += '<td style="text-align:center">' + data[i].email + "</td>";
+            str += '<td style="text-align:center">' + data[i].alamat + "</td>";
+            str += '<td style="text-align:center">';
+            str += '<button style="width:40px; height:40px;" class="btn btn-sm btn-primary" value="' + data[i].id + '" onclick="formEdit(this.value)">U</button>';
+            str += '<button style="width:40px; height:40px;" class="btn btn-danger ml-3" value="' + data[i].id + '" onclick="formDelete(this.value)">H</button>';
+            str += "</td>";
+            str += "</tr>";
+          }
+          str += "</table>";
+          str += "<br>";
+          $('#userLink').html(str);
+        }
+      });
+
+      }
+
+      function Tambah() {
+        var form = '<table class="table table-borderless">';
+        form += "<tr>";
+        form += "<td>";
+        form += '<label for="name">First Name*</label>';
+        form += '<input class = "form-control" type="text" id="firstName"><br>';
+        form += '<label for="name">Last Name*</label>';
+        form += '<input class = "form-control" type="text" id="lastName"><br>';
+        form += '<label for="name">Email*</label>';
+        form += '<input class = "form-control" type="text" id="email"><br>';
+        form += "</td>";
+        form += "</tr>";
+        form += "<tr>";
+        form += "<td>";
+        form += '<label for="name">Alamat*</label>';
+        form += '<textarea class="form-control" rows="4" cols="50" name="comment" form="usrform" id="alamat"></textarea>';
+        form += "</td>";
+        form += "</tr>";
+        form += "<tr>";
+        form += "<td>";
+        form += '<button class ="btn btn-success  float-right ml-5" onclick="SaveUser(this.value)">Simpan</button>';
+        form += '<button class ="btn btn-secondary float-right" onclick="BackUser()">Batal</button>';
+        form += "</td>";
+        form += "</tr>";
+        form += "</table>";
+
+        $(".modal-title").html("Warehouse");
+        $(".modal-body").html(form);
+        $("#myModal").modal("show");
+      }
+
+      function SaveUser(){
+
+          var formData = '{';
+          formData += '"firstName":"' + $("#firstName").val() + '",';
+          formData += '"lastName":"' + $("#lastName").val() + '",';
+          formData += '"email":"' + $("#email").val() + '",';
+          formData += '"alamat":"' + $("#alamat").val() + '"';
+          formData += '}';
+
+          $.ajax({
+
+                url : '/api/user',
+                type : 'post',
+                contentType : 'application/json',
+                data : formData,
+                success : function(data){
+                    swal("Data Berhasil Disimpan", "", "success");
+                    window.setInterval(delaySave, 2000);
+                }
+
+          })
+
+      }
+
+       function delaySave() {
+        window.location.href = "/user/index";
+      }
+
+    function formEdit(id){
+        $.ajax ({
+        url : '/api/user/' + id,
+        type : 'get',
+        contentType : 'application/json',
+        success : function(data){
+
+            var form = '<table class="table table-borderless">';
+        form += "<tr>";
+        form += "<td>";
+        form += '<label for="name">First Name*</label>';
+        form += '<input class = "form-control" type="text" id="firstName" value="' + data.firstName + '"><br>';
+        form += '<label for="name">Last Name*</label>';
+        form += '<input class = "form-control" type="text" id="lastName" value="' + data.lastName + '"><br>';
+        form += '<label for="name">Email*</label>';
+        form += '<input class = "form-control" type="text" id="email" value="' + data.email + '"><br>';
+        form += "</td>";
+        form += "</tr>";
+        form += "<tr>";
+        form += "<td>";
+        form += '<label for="name">Alamat*</label>';
+        form += '<textarea class="form-control" rows="4" cols="50" name="comment" form="usrform" id="alamat" value="' + data.alamat + '"></textarea>';
+        form += "</td>";
+        form += "</tr>";
+        form += "<tr>";
+        form += "<td>";
+        form += '<button class ="btn btn-success  float-right ml-5" value ="' + data.id + '" onclick="UpdateUser(this.value)">Simpan</button>';
+        form += '<button class ="btn btn-secondary float-right" onclick="BackUser()">Batal</button>';
+        form += "</td>";
+        form += "</tr>";
+        form += "</table>";
+
+        $(".modal-title").html("Ubah User");
+        $(".modal-body").html(form);
+        $("#myModal").modal("show");
+        }
+        });
+    }
+
+   function UpdateUser(id){
+          var formData = '{';
+          formData += '"firstName":"' + $('#firstName').val() + '",';
+          formData += '"lastName":"' + $('#lastName').val() + '",';
+          formData += '"email":"' + $("#email").val() + '",';
+          formData += '"alamat":"' + $("#alamat").val() + '"';
+          formData +='}';
+
+           console.log(formData)
+           $.ajax({
+               url:'/api/user/' + id,
+               type:'put',
+               contentType:'application/json',
+               data: formData,
+               success: function(data){
+               EditConfirm();
+                }
+           });
+   }
+   function EditConfirm() {
+        swal("Data Berhasil Diubah", "", "success");
+        window.setInterval(delayEdit, 3000);
+   }
+
+   function delayEdit() {
+        window.location.href = "/user/index";
+   }
+
+   function BackUser(){
+        $(function () {
+          window.location.href = "/user/index";
+        });
+   }
+
+   function formDelete(id){
+    var prompt = window.confirm("Are you sure ?");
+    if(prompt){
+        $.ajax({
+            url: '/api/user/' + id,
+            type: 'delete',
+            contentType: 'application/json',
+            success: function(data)
+            {
+                swal("Data Berhasil Dihapus", "", "success");
+                window.setInterval(delayDelete, 2000);
+            }
+        });
+    }
+  }
+
+    function delayDelete() {
+        window.location.href = "/user/index";
+     }
+
+
+</script>
+</body>
+</html>
